@@ -1,13 +1,14 @@
 {
   "name": "youtracker",
   "description": "Create default branches based on YouTrack issues",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "sys": "latest",
     "xml2js": "latest",
     "q": "latest",
     "request": "latest",
-    "child_process": "latest"
+    "child_process": "latest",
+    "fs": "latest"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,8 @@
   },
   "homepage": "https://github.com/fschaeffler/youtracker",
   "bin": {
-    "yt-issue-branch": "./bin/yt-issue-branch"
+    "yt-issue-branch": "./bin/yt-issue-branch",
+    "settings-yt-issue-branch.default.json": "./settings-yt-issue-branch.default.json"
   },
   "files": [
     "bin",

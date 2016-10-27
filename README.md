@@ -5,10 +5,14 @@ Create default branches based on YouTrack issues
 - nodejs needs to be installed
 - git needs to be installed
 
-# installation
+# installation npm
+- `npm install -g youtracker`
+- adjust the settings-yt-issue-branch.json to your needs
+
+# installation manually
 - checkout the repository
-- `cp settings.default.json settings.json`
-- adjust the settings.json to your needs
+- `cp settings-yt-issue-branch.default.json settings-yt-issue-branch.json`
+- adjust the settings-yt-issue-branch.json to your needs
 - `npm install`
 - add to PATH where yt-issue-branch is in
 
