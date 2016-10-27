@@ -25,3 +25,4 @@ Create default branches based on YouTrack issues
 - normalize the summary
 - checkout the default branch and pull the latest state
 - create a branch from the latest default branch, name it `<PROJECTID-123>_add-functionality-xyz` and check it out
+
