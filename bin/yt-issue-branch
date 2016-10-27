@@ -68,11 +68,11 @@ checkSettings = function () {
 
 	if (fs.existsSync(settingsLocal)) {
 		console.log("using settings from " + settingsLocal);
-		settings = require(settingsGlobal);
+		settings = require(settingsLocal);
 	}
 	else if (fs.existsSync(settingsGlobal)) {
 		console.log("using settings from " + settingsGlobal);
-		settings = require(settingsLocal);
+		settings = require(settingsGlobal);
 	}
 	else {
 		console.log("no settings found either at ./" + settingsLocal + " or " + settingsGlobal);
