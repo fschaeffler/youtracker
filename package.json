@@ -27,7 +27,7 @@
   "homepage": "https://github.com/fschaeffler/youtracker",
   "bin": {
     "yt-issue-branch": "./bin/yt-issue-branch",
-    "settings-yt-issue-branch.default.json": "./settings-yt-issue-branch.default.json"
+    "settings-yt-issue-branch.default.json": "./bin/settings-yt-issue-branch.default.json"
   },
   "files": [
     "bin",
