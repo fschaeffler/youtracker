@@ -1,5 +1,6 @@
 {
   "name": "youtracker",
+  "description": "Create default branches based on YouTrack issues",
   "version": "0.0.1",
   "dependencies": {
     "sys": "latest",
@@ -8,5 +9,28 @@
     "request": "latest",
     "child_process": "latest"
   },
-  "private": true
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fschaeffler/youtracker.git"
+  },
+  "keywords": [
+    "youtrack",
+    "git",
+    "issue",
+    "productivity"
+  ],
+  "author": "Florian Schaeffler <git@schf.de>",
+  "bugs": {
+    "url": "https://github.com/fschaeffler/youtracker/issues"
+  },
+  "homepage": "https://github.com/fschaeffler/youtracker",
+  "bin": {
+    "yt-issue-branch": "./bin/yt-issue-branch"
+  },
+  "files": [
+    "bin",
+    "README.md",
+    "index.js",
+    "settings.default.json"
+  ]
 }
