@@ -70,7 +70,7 @@ login(function(response) {
 	var issueId = process.argv[2].toUpperCase();
 
 	if(!isNaN(parseInt(issueId))) {
-		issueId = 'T2L-' + issueId;
+		issueId = settings.projectKey + '-' + issueId;
 	}
 
 	getIssue(issueId, function(response2) {

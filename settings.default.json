@@ -1,5 +1,6 @@
 {
 	"baseUrl": "https://<ORGANIZATION>.myjetbrains.com/youtrack",
 	"login": "<LOGIN>",
-	"password": "<PASSWORD>"
+	"password": "<PASSWORD>",
+	"projectKey" "XYZ"
 }
