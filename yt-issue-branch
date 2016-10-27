@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+
+var q = require('q');
+var request = require('request').defaults({jar: true});
+var parse = require('xml2js').parseString;
+var sys = require('sys')
+var exec = require('child_process').exec;
+
+var settings = require(__dirname + '/settings.json');
+
+login = function(cb){
+	var defer = q.defer();
+
+	request.post({url: settings.url + '/youtrack/rest/user/login', form: {login: settings.login, password: settings.password}}, function(err, res, body){
+		if (err || res.statusCode !== 200){
+			err = err || new Error('wrong credentials');
+			if (cb) return cb(err);
+
+			return defer.reject(err);
+		}
+
+		if (cb) return cb(res);
+		defer.resolve();
+	});
+
+	return defer.promise;
+}
+
+getIssue = function(issueId, cb) {
+	var defer = q.defer();
+
+	request.get({url: settings.url + '/youtrack/rest/issue/' + issueId}, function(err, res, body){
+		if (err || res.statusCode !== 200){
+			err = err || new Error('issue not available');
+			if (cb) return cb(err);
+
+			return defer.reject(err);
+		}
+
+		if (cb) return cb(body);
+		defer.resolve();
+	});
+
+	return defer.promise;    
+}
+
+formatSummary = function (rawSummary) {
+	return rawSummary.toLowerCase().replace(/\W+/g, " ").split(' ').join('-');
+}
+
+formatResult = function (issueId, summary) {
+	return 'feature/' + issueId + '_' + summary;
+}
+
+executeCommand = function (command) {
+	function puts(error, stdout, stderr) { sys.puts(stdout) }
+	exec(command, puts);
+}
+
+executeGit = function (defaultBranch, branchName) {
+	executeCommand('git checkout ' + defaultBranch + '; git pull; git branch ' + branchName + '; git checkout ' + branchName + '; echo "created and checked out branch ' + branchName + '"');
+}
+
+loadSettings = function () {
+
+}
+
+login(function(response) {
+	console.log(settings);
+	var issueId = process.argv[2].toUpperCase();
+
+	if(!isNaN(parseInt(issueId))) {
+		issueId = 'T2L-' + issueId;
+	}
+
+	getIssue(issueId, function(response2) {
+		parse(response2, function (err, parseResult) {
+			var json = JSON.stringify(parseResult);
+			var summaryNodes = parseResult['issue']['field'].filter(function(item) {
+				return item['$']['name'] === 'summary';
+			});
+
+			var summary = formatSummary(summaryNodes[0]['value'][0]);
+			var result = formatResult(issueId, summary);
+
+			executeGit('development', result);
+		});
+	});
+})

@@ -1,0 +1,12 @@
+{
+  "name": "youtracker",
+  "version": "0.0.1",
+  "dependencies": {
+    "sys": "latest",
+    "xml2js": "latest",
+    "q": "latest",
+    "request": "latest",
+    "child_process": "latest"
+  },
+  "private": true
+}
