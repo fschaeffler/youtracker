@@ -11,8 +11,8 @@ var settings = require(__dirname + '/settings.json');
 login = function(cb){
 	var defer = q.defer();
 
-	request.post({url: settings.url + '/youtrack/rest/user/login', form: {login: settings.login, password: settings.password}}, function(err, res, body){
-		if (err || res.statusCode !== 200){
+	request.post({url: settings.baseUrl + '/rest/user/login', form: {login: settings.login, password: settings.password}}, function(err, res, body) {
+		if (err || res.statusCode !== 200) {
 			err = err || new Error('wrong credentials');
 			if (cb) return cb(err);
 
@@ -29,7 +29,7 @@ login = function(cb){
 getIssue = function(issueId, cb) {
 	var defer = q.defer();
 
-	request.get({url: settings.url + '/youtrack/rest/issue/' + issueId}, function(err, res, body){
+	request.get({url: settings.baseUrl + '/rest/issue/' + issueId}, function(err, res, body) {
 		if (err || res.statusCode !== 200){
 			err = err || new Error('issue not available');
 			if (cb) return cb(err);
@@ -61,20 +61,15 @@ executeGit = function (defaultBranch, branchName) {
 	executeCommand('git checkout ' + defaultBranch + '; git pull; git branch ' + branchName + '; git checkout ' + branchName + '; echo "created and checked out branch ' + branchName + '"');
 }
 
-loadSettings = function () {
-
-}
-
-login(function(response) {
-	console.log(settings);
+login(function() {
 	var issueId = process.argv[2].toUpperCase();
 
 	if(!isNaN(parseInt(issueId))) {
 		issueId = settings.projectKey + '-' + issueId;
 	}
 
-	getIssue(issueId, function(response2) {
-		parse(response2, function (err, parseResult) {
+	getIssue(issueId, function(issueResponse) {
+		parse(issueResponse, function (err, parseResult) {
 			var json = JSON.stringify(parseResult);
 			var summaryNodes = parseResult['issue']['field'].filter(function(item) {
 				return item['$']['name'] === 'summary';
@@ -83,7 +78,7 @@ login(function(response) {
 			var summary = formatSummary(summaryNodes[0]['value'][0]);
 			var result = formatResult(issueId, summary);
 
-			executeGit('development', result);
+			executeGit(settings.defaultBranch, result);
 		});
 	});
 })
