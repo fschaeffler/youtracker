@@ -15,3 +15,9 @@ Create default branches based on YouTrack issues
 # usage
 - `cd <other git tracked repository>`
 - `yt-issue-branch 123` or `yt-issue-branch PROJECTID-123`
+
+# what will it do
+- connect to YouTrack and get the issue's summary
+- normalize the summary
+- checkout the default branch and pull the latest state
+- create a branch from the latest default branch, name it `<PROJECTID-123>_add-functionality-xyz` and check it out
