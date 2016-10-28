@@ -1,7 +1,0 @@
-{
-	"baseUrl": "https://<ORGANIZATION>.myjetbrains.com/youtrack",
-	"login": "<LOGIN>",
-	"password": "<PASSWORD>",
-	"projectKey": "XYZ",
-	"defaultBranch": "development"
-}

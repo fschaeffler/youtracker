@@ -8,7 +8,8 @@
     "q": "latest",
     "request": "latest",
     "child_process": "latest",
-    "fs": "latest"
+    "fs": "latest",
+    "readline": "latest"
   },
   "repository": {
     "type": "git",
@@ -26,13 +27,10 @@
   },
   "homepage": "https://github.com/fschaeffler/youtracker",
   "bin": {
-    "yt-issue-branch": "./bin/yt-issue-branch",
-    "settings-yt-issue-branch.default.json": "./bin/settings-yt-issue-branch.default.json"
+    "yt-issue-branch": "./bin/yt-issue-branch"
   },
   "files": [
     "bin",
-    "README.md",
-    "index.js",
-    "settings.default.json"
+    "README.md"
   ]
 }

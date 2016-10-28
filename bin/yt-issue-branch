@@ -6,6 +6,7 @@ var parse = require('xml2js').parseString;
 var sys = require('sys')
 var exec = require('child_process').exec;
 var fs = require('fs');
+var readline = require('readline');
 
 var settings;
 
@@ -31,7 +32,7 @@ getIssue = function(issueId, cb) {
 	var defer = q.defer();
 
 	request.get({url: settings.baseUrl + '/rest/issue/' + issueId}, function(err, res, body) {
-		if (err || res.statusCode !== 200){
+		if (err || res.statusCode !== 200) {
 			err = err || new Error('issue not available');
 			if (cb) return cb(err);
 
@@ -62,9 +63,21 @@ executeGit = function (defaultBranch, branchName) {
 	executeCommand('git checkout ' + defaultBranch + '; git pull; git branch ' + branchName + '; git checkout ' + branchName + '; echo "created and checked out branch ' + branchName + '"');
 }
 
+function getUserHome() {
+  return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+}
+
+getSettingsDirectory = function (isGlobal) {
+	return (isGlobal ? getUserHome() + '/.yt-issue-branch/' : '');
+}
+
+getSettingsFilename = function (isGlobal) {
+	return getSettingsDirectory(isGlobal) + 'settings-yt-issue-branch.json';
+}
+
 checkSettings = function () {
-	var settingsGlobal = __dirname + '/settings-yt-issue-branch.json';
-	var settingsLocal = 'settings-yt-issue-branch.json';
+	var settingsLocal = getSettingsFilename(false);
+	var settingsGlobal = getSettingsFilename(true);
 
 	if (fs.existsSync(settingsLocal)) {
 		console.log("using settings from " + settingsLocal);
@@ -76,7 +89,7 @@ checkSettings = function () {
 	}
 	else {
 		console.log("no settings found either at ./" + settingsLocal + " or " + settingsGlobal);
-		console.log("please copy and adjust the default settings form " + __dirname + "/settings-yt-issue-branch.default.json");
+		console.log("please create settings with 'yt-issue-branch setup'");
 		process.exit();
 	}
 }
@@ -89,27 +102,73 @@ checkInput = function () {
 	}
 }
 
-checkInput();
-checkSettings();
+createSettings = function () {
+	var rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout
+	});
 
-login(function() {
-	var issueId = process.argv[2].toUpperCase();
+	rl.question('Setup globally or locally [g|l]? ', function (answerLocation) {
+		rl.question('Base URL (e.g. https://<ORGANIZATION>.myjetbrains.com/youtrack)? ', function (answerBaseUrl) {
+			rl.question('YouTrack Login: ', function (answerLogin) {
+				rl.question('YouTrack Password: ', function (answerPassword) {
+					rl.question('YouTrack ProjectID: ', function (answerProjectId) {
+						rl.question('Default git branch: ', function (answerDefaultBranch) {
+							var settings = {
+								baseUrl: answerBaseUrl,
+								login: answerLogin,
+								password: answerPassword,
+								projectKey: answerProjectId,
+								defaultBranch: answerDefaultBranch
+							};
 
-	if(!isNaN(parseInt(issueId))) {
-		issueId = settings.projectKey + '-' + issueId;
-	}
+							if (answerLocation === 'g') {
+								if (!fs.existsSync(getSettingsDirectory(true))){
+									fs.mkdirSync(getSettingsDirectory(true));
+								}
 
-	getIssue(issueId, function(issueResponse) {
-		parse(issueResponse, function (err, parseResult) {
-			var json = JSON.stringify(parseResult);
-			var summaryNodes = parseResult['issue']['field'].filter(function(item) {
-				return item['$']['name'] === 'summary';
+								fs.writeFileSync(getSettingsFilename(true), JSON.stringify(settings));
+							}
+							else {
+								fs.writeFileSync(getSettingsFilename(false), JSON.stringify(settings));
+							}
+
+							rl.close();
+						});
+					});
+				});
 			});
-
-			var summary = formatSummary(summaryNodes[0]['value'][0]);
-			var result = formatResult(issueId, summary);
-
-			executeGit(settings.defaultBranch, result);
 		});
 	});
-})
+}
+
+checkInput();
+
+if (process.argv[2] === 'setup') {
+	createSettings();
+}
+else {
+	checkSettings();
+
+	login(function() {
+		var issueId = process.argv[2].toUpperCase();
+
+		if(!isNaN(parseInt(issueId))) {
+			issueId = settings.projectKey + '-' + issueId;
+		}
+
+		getIssue(issueId, function(issueResponse) {
+			parse(issueResponse, function (err, parseResult) {
+				var json = JSON.stringify(parseResult);
+				var summaryNodes = parseResult['issue']['field'].filter(function(item) {
+					return item['$']['name'] === 'summary';
+				});
+
+				var summary = formatSummary(summaryNodes[0]['value'][0]);
+				var result = formatResult(issueId, summary);
+
+				executeGit(settings.defaultBranch, result);
+			});
+		});
+	});
+}
