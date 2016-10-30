@@ -8,7 +8,6 @@
     "q": "latest",
     "request": "latest",
     "child_process": "latest",
-    "fs": "latest",
     "readline": "latest"
   },
   "repository": {
