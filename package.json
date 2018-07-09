@@ -1,15 +1,15 @@
 {
   "name": "youtracker",
   "description": "Create default branches based on YouTrack issues",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "dependencies": {
-    "sys": "latest",
-    "xml2js": "latest",
-    "q": "latest",
-    "request": "latest",
-    "child_process": "latest",
-    "fs": "latest",
-    "readline": "latest"
+    "bluebird": "^3.5.1",
+    "child_process": "^1.0.2",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "readline": "^1.3.0",
+    "request": "^2.87.0",
+    "xml2js": "^0.4.19"
   },
   "repository": {
     "type": "git",
@@ -29,8 +29,17 @@
   "bin": {
     "yt-issue-branch": "./bin/yt-issue-branch"
   },
+  "scripts": {
+    "start": "node ./src/index.js",
+    "prestart": "if [ ! -d ./node_modules ]; then npm install; fi;"
+  },
   "files": [
     "bin",
+    "src/git.js",
+    "src/youtrack.js",
+    "src/yitb-settings.js",
+    "src/yitb.js",
+    "src/index.js",
     "README.md"
   ]
 }
