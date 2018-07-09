@@ -14,7 +14,7 @@ Git.checkoutBranch = (targetBranch, sourceBranch = 'development') => {
 		child_process.exec(
 			`git checkout ${sourceBranch}; git pull; git checkout -b ${targetBranch}; created and checked out branch ${targetBranch}`,
 			(error, stdout, stderr) => {
-				Logging.log(`checked out branch ${targetBranch} from ${sourceBranch}`, useColor = true);
+				Logging.log(`checked out branch ${targetBranch} from ${sourceBranch}`, useColor = true, flash = true);
 				return resolve();
 			}
 		);
