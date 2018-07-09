@@ -1,17 +1,21 @@
-ytib = (typeof ytib === 'undefined') ? { } : ytib;
+YTIB = (typeof YTIB === 'undefined') ? { } : YTIB;
 
-ytib.run = (issueKey, sourceBranch) => {
-	const settings = ytib.settings.getSettings();
+module.exports = YTIB;
 
-	return ytib.youtrack.getIssueName(
+YTIB.run = (issueKey, sourceBranch) => {
+	const settings = YTIBSettings.getSettings(),
+		issueKeyChecked = YouTrack.getIssueKey(issueKey, settings.projectKey),
+		sourceBranchChecked = sourceBranch || settings.defaultBranch;
+
+	return YouTrack.getIssueName(
 			settings.baseUrl,
 			settings.login,
 			settings.password,
-			ytib.youtrack.getIssueKey(issueKey, settings.projectKey)
+			issueKeyChecked
 		).then((issueName) => {
-			return ytib.git.checkoutBranch(
-				ytib.git.getGitBranch(issueKey, issueName),
-				sourceBranch || settings.defaultBranch
+			return Git.checkoutBranch(
+				Git.getGitBranch(issueKeyChecked, issueName, sourceBranchChecked),
+				sourceBranchChecked
 			);
 		})
 };

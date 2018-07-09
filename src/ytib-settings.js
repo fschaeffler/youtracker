@@ -1,5 +1,6 @@
-ytib = (typeof ytib === 'undefined') ? { } : ytib;
-ytib.settings = (typeof ytib.settings === 'undefined') ? { } : ytib.settings;
+YTIBSettings = (typeof YTIBSettings === 'undefined') ? { } : YTIBSettings;
+
+module.exports = YTIBSettings;
 
 const fs = require('fs'),
 	path = require('path'),
@@ -7,7 +8,11 @@ const fs = require('fs'),
 
 const CONFIG_FILE_NAME = 'settings-yt-issue-branch.json';
 
-ytib.settings.setup = () => {
+YTIBSettings.setup = (noEnforce = false) => {
+	if (noEnforce && _getSettingsPath()) {
+		return;
+	}
+
 	const rl = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
@@ -39,15 +44,16 @@ ytib.settings.setup = () => {
 	});
 };
 
-ytib.setting.getSettings = () => {
+YTIBSettings.getSettings = () => {
 	const settingsPath = _getSettingsPath();
 
 	if (settingsPath) {
+		Logging.log(`using settings-file from ${settingsPath}`);
 		return _retrieveSettings(settingsPath);
 	}
 	else {
-		ytib.settings.setup();
-		return ytib.settings.getSettings();
+		YTIBSettings.setup();
+		return YTIBSettings.getSettings();
 	}
 };
 
@@ -62,7 +68,7 @@ const _persistSettings = (settings, local = false) => {
 	fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
 };
 
-const _retrieveSettings = (location) {
+const _retrieveSettings = (location) => {
 	return JSON.parse(fs.readFileSync(location));
 };
 
@@ -79,5 +85,13 @@ const _getSettingsLocationLocal = () => {
 };
 
 const _getSettingsPath = () => {
-	return _getSettingsLocationLocal() || _getSettingsLocationGlobal();
+	if (fs.existsSync(_getSettingsLocationLocal())) {
+		return _getSettingsLocationLocal();
+	}
+	else if (fs.existsSync(_getSettingsLocationGlobal())) {
+		return _getSettingsLocationGlobal();
+	}
+	else {
+		return null;
+	}
 };

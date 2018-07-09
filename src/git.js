@@ -1,20 +1,31 @@
-ytib = (typeof ytib === 'undefined') ? { } : ytib;
-ytib.git = (typeof ytib.git === 'undefined') ? { } : ytib.git;
+Git = (typeof Git === 'undefined') ? { } : Git;
+
+module.exports = Git;
 
 const Promise = require('bluebird'),
 	child_process = require('child_process');
 
-ytib.git.getGitBranch = (issueKey, issueName) => {
-	return `feature/${issueKey}_${issueName}`;
+Git.getGitBranch = (issueKey, issueName, sourceBranch) => {
+	return `${_getBranchType(sourceBranch)}/${issueKey}_${issueName}`;
 };
 
-ytib.git.checkoutBranch = (targetBranch, sourceBranch = 'development') => {
+Git.checkoutBranch = (targetBranch, sourceBranch = 'development') => {
 	return new Promise((resolve) => {
 		child_process.exec(
 			`git checkout ${sourceBranch}; git pull; git checkout -b ${targetBranch}; created and checked out branch ${targetBranch}`,
 			(error, stdout, stderr) => {
+				Logging.log(`checked out branch ${targetBranch} from ${sourceBranch}`, useColor = true);
 				return resolve();
 			}
 		);
 	});
+};
+
+const _getBranchType = (sourceBranch) => {
+	if (sourceBranch === 'staging' || sourceBranch === 'master') {
+		return 'hotfix';
+	}
+	else {
+		return 'feature';
+	}
 };

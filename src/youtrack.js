@@ -1,16 +1,19 @@
-ytib = (typeof ytib === 'undefined') ? { } : ytib;
-ytib.youtrack = (typeof ytib.youtrack === 'undefined') ? { } : ytib.youtrack;
+YouTrack = (typeof YouTrack === 'undefined') ? { } : YouTrack;
+
+module.exports = YouTrack;
 
 const Promise = require('bluebird'),
 	request = require('request').defaults({jar: true}),
 	parse = require('xml2js').parseString;
 
-ytib.youtrack.getIssueKey = (issueKey, projectKey) => {
-	return !isNaN(parseInt(issueId)) ? `${projectKey}-${issueKey}` : issueKey;
+YouTrack.getIssueKey = (issueKey, projectKey) => {
+	return !isNaN(parseInt(issueKey)) ? `${projectKey}-${issueKey}` : issueKey;
 };
 
-ytib.youtrack.getIssueName = (baseUrl, username, password, issueId, formatName) => {
-	return _login(baseUrl, username, password)
+YouTrack.getIssueName = (baseUrl, login, password, issueId, formatName) => {
+	Logging.log(`retrieving story-name for issue ${issueId}`);
+
+	return _login(baseUrl, login, password)
 		.then(() => {
 			return _getIssue(baseUrl, issueId);
 		})
@@ -19,11 +22,14 @@ ytib.youtrack.getIssueName = (baseUrl, username, password, issueId, formatName) 
 		});
 };
 
-const _login = (baseUrl, username, password) => {
+const _login = (baseUrl, login, password) => {
 	return new Promise((resolve, reject) => {
 		request.post({
 				url: `${baseUrl}/rest/user/login`,
-				form: {login: settings.login, password: settings.password}
+				form: {
+					login: login,
+					password: password
+				}
 			},
 			(error, response, body) => {
 				if (error || response.statusCode !== 200) {
@@ -58,10 +64,10 @@ const _getIssueName = (rawIssue, formatName = true) => {
 		parse(rawIssue, (error, result) => {
 			if (!error && result) {
 				const json = JSON.stringify(result),
-					rawNames = parseResult['issue']['field'].filter(function(item) {
+					rawNames = result['issue']['field'].filter(function(item) {
 						return item['$']['name'] === 'summary';
 					}),
-					rawName = summaryNodes[0]['value'][0],
+					rawName = rawNames[0]['value'][0],
 					name = _formatIssueName(rawName);
 
 				return resolve(name);

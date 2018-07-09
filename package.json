@@ -27,19 +27,19 @@
   },
   "homepage": "https://github.com/fschaeffler/youtracker",
   "bin": {
-    "yt-issue-branch": "./bin/yt-issue-branch"
+    "yt-issue-branch": "bin/yt-issue-branch.sh",
+    "yt-issue-branch-staging": "bin/yt-issue-branch-staging.sh",
+    "yt-issue-branch-production": "bin/yt-issue-branch-production.sh"
   },
   "scripts": {
     "start": "node ./src/index.js",
-    "prestart": "if [ ! -d ./node_modules ]; then npm install; fi;"
+    "prestart": "if [ ! -d ./node_modules ]; then npm install; fi;",
+    "postinstall": "yt-issue-branch setup-no-enforce"
   },
   "files": [
     "bin",
-    "src/git.js",
-    "src/youtrack.js",
-    "src/yitb-settings.js",
-    "src/yitb.js",
-    "src/index.js",
+    "src",
     "README.md"
-  ]
+  ],
+  "license": "MIT"
 }
