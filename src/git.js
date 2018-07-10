@@ -12,10 +12,17 @@ Git.getGitBranch = (issueKey, issueName, sourceBranch) => {
 Git.checkoutBranch = (targetBranch, sourceBranch = 'development') => {
 	return new Promise((resolve) => {
 		child_process.exec(
-			`git checkout ${sourceBranch}; git pull; git checkout -b ${targetBranch}; created and checked out branch ${targetBranch}`,
+			`git checkout ${sourceBranch}; git pull; git checkout -b ${targetBranch};`,
+			{cwd: process.env.OLDPWD},
 			(error, stdout, stderr) => {
+				if (error) {
+					console.log(error);
+				}
+
+				console.log(stdout);
+				console.log(stderr);
+
 				Logging.log(`checked out branch ${targetBranch} from ${sourceBranch}`, useColor = true, flash = true);
-				return resolve();
 			}
 		);
 	});

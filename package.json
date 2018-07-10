@@ -1,7 +1,7 @@
 {
   "name": "youtracker",
   "description": "Create default branches based on YouTrack issues",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "dependencies": {
     "bluebird": "^3.5.1",
     "child_process": "^1.0.2",

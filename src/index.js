@@ -14,7 +14,7 @@ const _getIssueKey = (parameters) => {
 	for (let i = 1; i < parameters.original.length; i++) {
 		const currentKey = parameters.original[i];
 
-		if (currentKey === '--branch') {
+		if (currentKey === '--branch' || currentKey === '--silent') {
 			i++;
 		}
 		else {
